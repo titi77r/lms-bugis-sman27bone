@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS Bahasa Daerah Berbasis Gamifikasi - SMAN 27 Bone</title>
+    <style>
+        :root {
+            --maroon: #7A1C1C;
+            --maroon-dark: #521010;
+            --gold: #D99B26;
+            --gold-light: #FFF5E0;
+            --navy: #1B365D;
+            --bg: #F4F6F9;
+            --card: #FFFFFF;
+            --text: #1F2937;
+            --muted: #6B7280;
+            --success: #15803D;
+            --border: #E5E7EB;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.5; }
+        .lontara {
+            font-family: 'Noto Sans Buginese', 'Saweri', serif;
+            font-size: 1.65rem;
+            color: var(--maroon);
+            letter-spacing: 2px;
+            display: inline-block;
+            background: var(--gold-light);
+            padding: 4px 12px;
+            border-radius: 8px;
+            border: 1px solid #F3D18C;
+        }
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--maroon), var(--navy));
+            color: white;
+            padding: 14px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            border-bottom: 4px solid var(--gold);
+        }
+        .header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .logo-badge {
+            background: var(--gold);
+            color: var(--maroon-dark);
+            font-weight: 800;
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+        .brand h1 { font-size: 1.05rem; font-weight: 700; }
+        .brand p { font-size: 0.78rem; opacity: 0.9; }
+        .user-stats {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.12);
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+        }
+        .xp-pill { background: var(--gold); color: #111; font-weight: 700; padding: 2px 10px; border-radius: 999px; }
+
+        /* Navigation */
+        nav {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
+        .nav-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            gap: 6px;
+            padding: 8px 16px;
+        }
+        .nav-btn {
+            border: none;
+            background: transparent;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            color: var(--muted);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+        .nav-btn:hover { background: #F3F4F6; color: var(--maroon); }
+        .nav-btn.active { background: var(--maroon); color: white; }
+
+        /* Container */
+        main { max-width: 1100px; margin: 20px auto; padding: 0 16px 40px; }
+        .page { display: none; animation: fadeIn 0.25s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Grid & Cards */
+        .grid-2 { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; }
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+        .card {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            margin-bottom: 18px;
+        }
+        .card-title { font-size: 1.1rem; font-weight: 700; color: var(--maroon); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+
+        /* Login Box */
+        .login-hero {
+            max-width: 480px;
+            margin: 30px auto;
+            text-align: center;
+            border-top: 5px solid var(--maroon);
+        }
+        .form-group { text-align: left; margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; }
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-primary { background: var(--maroon); color: white; }
+        .btn-primary:hover { background: var(--maroon-dark); }
+        .btn-gold { background: var(--gold); color: #1F1600; }
+        .btn-gold:hover { filter: brightness(0.95); }
+        .btn-outline { background: white; border: 1px solid var(--maroon); color: var(--maroon); }
+        .btn-sm { padding: 6px 12px; font-size: 0.82rem; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Progress Bar */
+        .progress-wrap { background: #E5E7EB; height: 12px; border-radius: 999px; overflow: hidden; margin: 8px 0; }
+        .progress-fill { background: linear-gradient(90deg, var(--maroon), var(--gold)); height: 100%; transition: width 0.4s ease; }
+
+        /* Badges */
+        .badges-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+        .badge-item {
+            text-align: center;
+            padding: 12px 8px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #FAFAFA;
+        }
+        .badge-item.unlocked { background: var(--gold-light); border-color: var(--gold); }
+        .badge-item.locked { opacity: 0.5; filter: grayscale(1); }
+        .badge-icon { font-size: 1.8rem; margin-bottom: 4px; }
+        .badge-name { font-size: 0.8rem; font-weight: 700; }
+
+        /* Leaderboard */
+        .lb-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            border-radius: 8px;
+        }
+        .lb-row.me { background: var(--gold-light); font-weight: 700; border: 1px solid var(--gold); }
+        .lb-rank { width: 28px; font-weight: 800; color: var(--maroon); }
+
+        /* Modules */
+        .level-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .level-tab {
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .level-tab.active { border-color: var(--maroon); background: var(--maroon); color: white; }
+        .level-tab.locked { background: #F3F4F6; color: #9CA3AF; cursor: not-allowed; }
+
+        .lontara-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+            gap: 10px;
+            margin: 14px 0;
+        }
+        .aksara-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            background: #FFFDF9;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .aksara-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
+        .aksara-glyph { font-family: 'Noto Sans Buginese', 'Saweri', serif; font-size: 2rem; color: var(--maroon); }
+        .aksara-latin { font-weight: 700; font-size: 0.9rem; margin-top: 2px; }
+
+        /* Quiz */
+        .quiz-option {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-option:hover { border-color: var(--navy); background: #F8FAFC; }
+        .quiz-option.selected { border-color: var(--maroon); background: var(--gold-light); font-weight: 600; }
+
+        /* Table */
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
+        th { background: #F8FAFC; color: var(--navy); font-weight: 700; }
+
+        .alert { padding: 12px 14px; border-radius: 8px; margin-bottom: 14px; font-size: 0.9rem; }
+        .alert-info { background: #EFF6FF; border-left: 4px solid var(--navy); color: #1E3A8A; }
+        .alert-success { background: #F0FDF4; border-left: 4px solid var(--success); color: #166534; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-inner">
+        <div class="brand">
+            <div class="logo-badge">ᨒᨚ</div>
+            <div>
+                <h1>LMS Bahasa Daerah Berbasis Gamifikasi</h1>
+                <p>SMAN 27 Bone • Muatan Lokal Bahasa Bugis (Fase E & F)</p>
+            </div>
+        </div>
+        <div class="user-stats" id="headerStats" style="display:none;">
+            <span id="hdrName">Murid</span>
+            <span class="xp-pill" id="hdrXP">0 XP</span>
+            <span id="hdrLevel">Lv. 1</span>
+        </div>
+    </div>
+</header>
+
+<nav id="mainNav" style="display:none;">
+    <div class="nav-inner">
+        <button class="nav-btn active" onclick="showPage('dashboard', this)">🏠 Beranda & Peringkat</button>
+        <button class="nav-btn" onclick="showPage('modules', this)">📚 Modul Berjenjang</button>
+        <button class="nav-btn" onclick="showPage('quiz', this)">⚔️ Arena Tantangan</button>
+        <button class="nav-btn" onclick="showPage('tasks', this)">📜 Ruang Proyek Budaya</button>
+        <button class="nav-btn" onclick="showPage('teacher', this)">📊 Dasbor Guru</button>
+        <button class="nav-btn" onclick="showPage('certificate', this)">🏆 Pencapaian & Sertifikat</button>
+    </div>
+</nav>
+
+<main>
+    <!-- 1. HALAMAN AWAL & LOGIN -->
+    <section id="page-login" class="page active">
+        <div class="card login-hero">
+            <div class="lontara" style="margin-bottom: 12px;">ᨈᨅᨙ ᨔᨒᨆ ᨆᨈᨚᨄ</div>
+            <h2 style="color: var(--maroon); margin-bottom: 6px;">Tabek! Selamat Datang</h2>
+            <p style="font-size: 0.9rem; color: var(--muted); margin-bottom: 18px;">
+                Platform Belajar Interaktif Bahasa Bugis & Aksara Lontara<br>
+                <strong>Guru Pengampu:</strong> Titi Rahmayanti, S.Pd., Gr. (SMAN 27 Bone)
+            </p>
+            <div class="form-group">
+                <label>Nama Lengkap Murid / Guru</label>
+                <input type="text" id="inputName" class="form-control" placeholder="Contoh: Andi Muh. Alif" value="Andi Muh. Alif">
+            </div>
+            <div class="form-group">
+                <label>Kelas / Fase</label>
+                <select id="inputClass" class="form-control">
+                    <option value="X.1 (Fase E)">Kelas X.1 (Fase E)</option>
+                    <option value="X.2 (Fase E)">Kelas X.2 (Fase E)</option>
+                    <option value="XI.1 (Fase F)">Kelas XI.1 (Fase F)</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="loginApp()">Masuk & Mulai Belajar 🚀</button>
+            <p style="font-size: 0.78rem; color: var(--muted); margin-top: 12px;">
+                Kumpulkan XP, buka gembok level Lontara, dan raih lencana budaya <em>Acca Lontara</em>!
+            </p>
+        </div>
+    </section>
+
+    <!-- 2. BERANDA & PAPAN PERINGKAT -->
+    <section id="page-dashboard" class="page">
+        <div class="grid-2">
+            <div>
+                <div class="card" style="border-left: 5px solid var(--gold);">
+                    <div class="card-title">👤 Profil & Progres Belajar</div>
+                    <p><strong id="profName">Andi Muh. Alif</strong> • <span id="profClass" style="color:var(--muted);">Kelas X.1</span></p>
+                    <p style="margin-top:6px;">Gelar Saat Ini: <strong id="profTitle" style="color:var(--maroon);">Level 1 - Pemula Lontara</strong></p>
+                    <div class="progress-wrap">
+                        <div class="progress-fill" id="xpProgressBar" style="width: 20%;"></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--muted);">
+                        <span>Total Poin: <strong id="profXP">100 XP</strong></span>
+                        <span>Target Level Berikutnya: 300 XP</span>
+                    </div>
+                    <div style="margin-top: 16px;">
+                        <button class="btn btn-primary" onclick="navTo('modules')">▶ Lanjutkan Belajar</button>
+                        <button class="btn btn-gold" onclick="navTo('quiz')">⚡ Tantangan Kuis</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">🏅 Koleksi Lencana Budaya (Badges)</div>
+                    <div class="badges-grid">
+                        <div class="badge-item unlocked" id="badge-tabek">
+                            <div class="badge-icon">🤝</div>
+                            <div class="badge-name">Lencana Tabek</div>
+                            <div style="font-size:0.72rem;">Login & Mulai Belajar</div>
+                        </div>
+                        <div class="badge-item locked" id="badge-lontara">
+                            <div class="badge-icon">📜</div>
+                            <div class="badge-name">Acca Lontara</div>
+                            <div style="font-size:0.72rem;">Skor Kuis ≥ 80</div>
+                        </div>
+                        <div class="badge-item locked" id="badge-pappaseng">
+                            <div class="badge-icon">👑</div>
+                            <div class="badge-name">Macca Mabbicara</div>
+                            <div style="font-size:0.72rem;">Kirim Proyek Budaya</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <div class="card-title">🏆 Papan Peringkat Kelas (Leaderboard)</div>
+                    <div id="leaderboardList"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">📌 Misi Hari Ini</div>
+                    <ul style="padding-left: 18px; font-size: 0.9rem;">
+                        <li>Pelajari 23 Induk Huruf <em>Ina Sure'</em> (+50 XP)</li>
+                        <li>Selesaikan Kuis Sapaan Santun <em>Ada' Pangadereng</em> (+100 XP)</li>
+                        <li>Unggah tulisan pepatah Bugis (<em>Pappaseng</em>) (+150 XP)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. MODUL BELAJAR BERJENJANG -->
+    <section id="page-modules" class="page">
+        <div class="card">
+            <div class="card-title">📚 Modul Belajar Berjenjang (Level-Based Modules)</div>
+            <div class="level-tabs">
+                <button class="level-tab active" id="tab-lv1" onclick="selectModule(1)">Level 1: Induk Huruf Lontara</button>
+                <button class="level-tab" id="tab-lv2" onclick="selectModule(2)">Level 2: Sapaan Santun (Ada' Pangadereng)</button>
+                <button class="level-tab locked" id="tab-lv3" onclick="selectModule(3)">🔒 Level 3: Pappaseng & Dialog (Skor Kuis ≥ 80)</button>
+            </div>
+
+            <div id="moduleContent"></div>
+        </div>
+    </section>
+
+    <!-- 4. ARENA TANTANGAN & KUIS -->
+    <section id="page-quiz" class="page">
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+                <div class="card-title" style="margin:0;">⚔️ Arena Tantangan & Kuis Gamifikasi</div>
+                <div style="background:var(--maroon); color:white; padding:6px 14px; border-radius:8px; font-weight:700;">
+                    ⏱️ Waktu: <span id="quizTimer">02:00</span>
+                </div>
+            </div>
+            <div id="quizContainer"></div>
+        </div>
+    </section>
+
+    <!-- 5. RUANG TUGAS & PROYEK BUDAYA -->
+    <section id="page-tasks" class="page">
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">📜 Misi Proyek Budaya: Menulis Pappaseng</div>
+                <p style="font-size:0.92rem; margin-bottom:10px;">
+                    <strong>Instruksi:</strong> Tulislah salah satu pepatah bijak Bugis (<em>Pappaseng</em>) di bawah ini pada kertas menggunakan aksara Lontara yang rapi, lalu unggah foto hasil tulisan atau rekaman pelafalannya.
+                </p>
+                <div class="alert alert-info">
+                    <div class="lontara" style="margin-bottom:6px;">ᨔᨗᨄᨀᨈᨕᨘ ᨔᨗᨄᨀᨒᨙᨅᨗ ᨔᨗᨄᨀᨕᨗᨂᨙ</div><br>
+                    <strong>Transliterasi:</strong> <em>Sipakatau, Sipakalebbi, Sipakainge</em><br>
+                    <strong>Arti:</strong> Saling memanusiakan, saling memuliakan, dan saling mengingatkan.
+                </div>
+                <h4 style="font-size:0.9rem; margin-bottom:6px;">Rubrik Penilaian:</h4>
+                <table>
+                    <tr><th>Kriteria</th><th>Skor Maks</th></tr>
+                    <tr><td>Ketepatan bentuk huruf & tanda baca (<em>ana' sure'</em>)</td><td>40</td></tr>
+                    <tr><td>Kerapian dan keterbacaan tulisan Lontara</td><td>30</td></tr>
+                    <tr><td>Ketepatan pelafalan / kesantunan bahasa</td><td>30</td></tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📤 Unggah Karya Proyek Budaya</div>
+                <div class="form-group">
+                    <label>Judul Karya / Pilihan Pappaseng</label>
+                    <input type="text" id="taskTitle" class="form-control" value="Tulisan Lontara: Sipakatau, Sipakalebbi, Sipakainge">
+                </div>
+                <div class="form-group">
+                    <label>Pilih Berkas (Foto Tulisan Lontara / Audio / Video)</label>
+                    <input type="file" id="taskFile" class="form-control" accept="image/*,audio/*,video/*">
+                </div>
+                <div class="form-group">
+                    <label>Catatan untuk Guru</label>
+                    <textarea id="taskNote" class="form-control" rows="3" placeholder="Tuliskan refleksi singkat Anda saat menulis aksara Lontara..."></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="submitTask()">Kirim Tugas & Klaim +150 XP</button>
+                <div id="taskStatus" style="margin-top:14px;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. DASBOR GURU & REKAP NILAI -->
+    <section id="page-teacher" class="page">
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+                <div>
+                    <div class="card-title" style="margin:0;">📊 Dasbor Pemantauan Guru & Auto-Gradebook</div>
+                    <p style="font-size:0.85rem; color:var(--muted);">Pengelola: Titi Rahmayanti, S.Pd., Gr. • Mata Pelajaran: Muatan Lokal Bahasa Bugis</p>
+                </div>
+                <button class="btn btn-gold" onclick="exportCSV()">📥 Unduh Rekap Nilai (CSV/Excel)</button>
+            </div>
+            <div style="overflow-x:auto;">
+                <table id="gradebookTable">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Murid</th>
+                            <th>Kelas</th>
+                            <th>Total XP</th>
+                            <th>Nilai Kuis</th>
+                            <th>Status Proyek Budaya</th>
+                            <th>Keterangan KKTP</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gradebookBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. HALAMAN PENUTUP & SERTIFIKAT -->
+    <section id="page-certificate" class="page">
+        <div class="card" style="text-align:center; border: 3px double var(--gold); background: #FFFDF7; padding: 30px 20px;">
+            <div style="font-size:0.85rem; font-weight:700; color:var(--navy); letter-spacing:1px;">PEMERINTAH PROVINSI SULAWESI SELATAN • DINAS PENDIDIKAN</div>
+            <h2 style="color:var(--maroon); margin:6px 0;">SERTIFIKAT PENCAPAIAN BELAJAR DIGITAL</h2>
+            <p style="font-size:0.9rem; color:var(--muted);">Diberikan kepada:</p>
+            <h1 id="certName" style="font-size:1.8rem; margin:10px 0; color:#111; border-bottom:2px solid var(--gold); display:inline-block; padding:0 24px;">Andi Muh. Alif</h1>
+            <p style="max-width:600px; margin:10px auto; font-size:0.92rem;">
+                Telah berpartisipasi aktif dalam pembelajaran interaktif <strong>Muatan Lokal Bahasa Daerah Bugis & Aksara Lontara</strong> pada <em>LMS Bahasa Daerah Berbasis Gamifikasi SMAN 27 Bone</em> dengan capaian <strong id="certXP">100 XP</strong>.
+            </p>
+            <div style="margin-top:20px; font-size:0.85rem;">
+                <p>Kabupaten Bone, November 2026</p>
+                <p style="margin-top:28px; font-weight:700;">Titi Rahmayanti, S.Pd., Gr.</p>
+                <p style="color:var(--muted);">Guru Mata Pelajaran Bahasa Daerah SMAN 27 Bone</p>
+            </div>
+            <div style="margin-top:20px;">
+                <button class="btn btn-primary" onclick="window.print()">🖨️ Cetak / Simpan PDF Sertifikat</button>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    // State Aplikasi
+    let state = {
+        name: "Andi Muh. Alif",
+        kelas: "X.1 (Fase E)",
+        xp: 100,
+        quizScore: 0,
+        level3Unlocked: false,
+        taskSubmitted: false,
+        mod1Read: false,
+        mod2Read: false
+    };
+
+    const studentsData = [
+        { name: "Besek Tenriawaru", kelas: "X.1 (Fase E)", xp: 420, quiz: 90, task: "Dinilai (92)" },
+        { name: "La Oddang", kelas: "X.1 (Fase E)", xp: 360, quiz: 85, task: "Dinilai (88)" },
+        { name: "Andi Batari", kelas: "X.1 (Fase E)", xp: 310, quiz: 80, task: "Menunggu Nilai" },
+        { name: "Muh. Arsyad", kelas: "X.1 (Fase E)", xp: 240, quiz: 75, task: "Belum Dikumpul" }
+    ];
+
+    const inaSure = [
+        { g: "ᨀ", l: "ka" }, { g: "ᨁ", l: "ga" }, { g: "ᨂ", l: "nga" }, { g: "ᨃ", l: "ngka" },
+        { g: "ᨄ", l: "pa" }, { g: "ᨅ", l: "ba" }, { g: "ᨆ", l: "ma" }, { g: "ᨇ", l: "mpa" },
+        { g: "ᨈ", l: "ta" }, { g: "ᨉ", l: "da" }, { g: "ᨊ", l: "na" }, { g: "ᨋ", l: "nra" },
+        { g: "ᨌ", l: "ca" }, { g: "ᨍ", l: "ja" }, { g: "ᨎ", l: "nya" }, { g: "ᨏ", l: "nca" },
+        { g: "ᨐ", l: "ya" }, { g: "ᨑ", l: "ra" }, { g: "ᨒ", l: "la" }, { g: "ᨓ", l: "wa" },
+        { g: "ᨔ", l: "sa" }, { g: "ᨕ", l: "a" }, { g: "ᨖ", l: "ha" }
+    ];
+
+    const quizQuestions = [
+        {
+            q: "Manakah bunyi bacaan yang tepat untuk induk huruf Lontara berikut: ᨈᨅᨙ ?",
+            options: ["Tabek (Permisi / Salam hormat)", "Tabea (Selamat datang)", "Tarima (Terima kasih)", "Tudang (Duduk)"],
+            ans: 0,
+            exp: "Huruf ᨈ (ta) + ᨅᨙ (be dengan tanda e-taling) dibaca 'Tabek', ungkapan santun saat lewat di depan orang lain."
+        },
+        {
+            q: "Apa arti ungkapan santun Bahasa Bugis 'Tudang Sipulung'?",
+            options: ["Berjalan bersama-sama", "Duduk berkumpul bermusyawarah", "Makan bersama keluarga", "Menulis aksara Lontara"],
+            ans: 1,
+            exp: "'Tudang' berarti duduk, dan 'Sipulung' berarti berkumpul bersama untuk bermusyawarah dengan penuh rasa hormat."
+        },
+        {
+            q: "Berapakah jumlah induk huruf (Ina Sure') dalam aksara Lontara Bugis?",
+            options: ["18 huruf", "20 huruf", "23 huruf", "26 huruf"],
+            ans: 2,
+            exp: "Aksara Lontara Bugis memiliki 23 induk huruf (Ina Sure') dimulai dari 'ka' (ᨀ) hingga 'ha' (ᨖ)."
+        },
+        {
+            q: "Huruf Lontara ᨔᨗᨄᨀᨈᨕᨘ dibaca...",
+            options: ["Sipakalebbi", "Sipakainge", "Sipakatau", "Sirui Menre"],
+            ans: 2,
+            exp: "ᨔᨗ (si) - ᨄ (pa) - ᨀ (ka) - ᨈ (ta) - ᨕᨘ (u) dibaca 'Sipakatau' (saling memanusiakan)."
+        }
+    ];
+
+    function loginApp() {
+        const nameVal = document.getElementById('inputName').value.trim();
+        const classVal = document.getElementById('inputClass').value;
+        if (!nameVal) return alert("Silakan masukkan nama Anda terlebih dahulu.");
+        state.name = nameVal;
+        state.kelas = classVal;
+        document.getElementById('page-login').classList.remove('active');
+        document.getElementById('headerStats').style.display = 'flex';
+        document.getElementById('mainNav').style.display = 'block';
+        updateUI();
+        selectModule(1);
+        renderQuiz();
+        showPage('dashboard', document.querySelector('.nav-btn'));
+    }
+
+    function showPage(pageId, btnEl) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-' + pageId).classList.add('active');
+        if (btnEl) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            btnEl.classList.add('active');
+        }
+        updateUI();
+    }
+
+    function navTo(pageId) {
+        const map = { dashboard: 0, modules: 1, quiz: 2, tasks: 3, teacher: 4, certificate: 5 };
+        const btns = document.querySelectorAll('.nav-btn');
+        showPage(pageId, btns[map[pageId]]);
+    }
+
+    function addXP(points, msg) {
+        state.xp += points;
+        updateUI();
+        alert(`🎉 Selamat! Anda memperoleh +${points} XP (${msg}).`);
+    }
+
+    function updateUI() {
+        document.getElementById('hdrName').textContent = state.name;
+        document.getElementById('hdrXP').textContent = state.xp + " XP";
+        const lv = state.xp >= 350 ? 3 : (state.xp >= 200 ? 2 : 1);
+        const titles = { 1: "Level 1 - Pemula Lontara", 2: "Level 2 - Penutur Santun", 3: "Level 3 - To Acca Lontara" };
+        document.getElementById('hdrLevel').textContent = "Lv. " + lv;
+        document.getElementById('profName').textContent = state.name;
+        document.getElementById('profClass').textContent = state.kelas;
+        document.getElementById('profXP').textContent = state.xp + " XP";
+        document.getElementById('profTitle').textContent = titles[lv];
+        document.getElementById('certName').textContent = state.name;
+        document.getElementById('certXP').textContent = state.xp + " XP";
+
+        const pct = Math.min(100, Math.round((state.xp / 450) * 100));
+        document.getElementById('xpProgressBar').style.width = pct + "%";
+
+        if (state.quizScore >= 80) {
+            state.level3Unlocked = true;
+            document.getElementById('badge-lontara').classList.replace('locked', 'unlocked');
+            const tab3 = document.getElementById('tab-lv3');
+            tab3.classList.remove('locked');
+            tab3.textContent = "🔓 Level 3: Pappaseng & Dialog";
+        }
+        if (state.taskSubmitted) {
+            document.getElementById('badge-pappaseng').classList.replace('locked', 'unlocked');
+        }
+
+        renderLeaderboard();
+        renderGradebook();
+    }
+
+    function renderLeaderboard() {
+        const all = [
+            ...studentsData,
+            { name: state.name + " (Anda)", kelas: state.kelas, xp: state.xp, isMe: true }
+        ].sort((a, b) => b.xp - a.xp);
+
+        const html = all.map((s, idx) => `
+            <div class="lb-row ${s.isMe ? 'me' : ''}">
+                <div><span class="lb-rank">#${idx + 1}</span> ${s.name}</div>
+                <div style="font-weight:700; color:var(--maroon);">${s.xp} XP</div>
+            </div>
+        `).join('');
+        document.getElementById('leaderboardList').innerHTML = html;
+    }
+
+    function selectModule(lv) {
+        if (lv === 3 && !state.level3Unlocked) {
+            alert("🔒 Level 3 terkunci! Selesaikan Arena Tantangan & Kuis dengan skor minimal 80 untuk membuka level ini.");
+            return;
+        }
+        document.querySelectorAll('.level-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-lv' + lv).classList.add('active');
+
+        const box = document.getElementById('moduleContent');
+        if (lv === 1) {
+            const cards = inaSure.map(item => `
+                <div class="aksara-card" onclick="speakText('${item.l}')">
+                    <div class="aksara-glyph">${item.g}</div>
+                    <div class="aksara-latin">${item.l}</div>
+                    <div style="font-size:0.7rem; color:var(--muted);">🔊 Klik dengar</div>
+                </div>
+            `).join('');
+            box.innerHTML = `
+                <h3>Level 1: Mengenal 23 Induk Huruf (Ina Sure')</h3>
+                <p style="font-size:0.9rem; color:var(--muted); margin-bottom:10px;">
+                    Klik pada setiap kartu aksara Lontara di bawah ini untuk mendengarkan pelafalan sukukata dasarnya.
+                </p>
+                <div class="lontara-grid">${cards}</div>
+                <button class="btn btn-primary" ${state.mod1Read ? 'disabled' : ''} onclick="completeModule(1)">
+                    ${state.mod1Read ? '✅ Materi Level 1 Selesai' : 'Selesai Membaca (+50 XP)'}
+                </button>
+                <button class="btn btn-gold" onclick="navTo('quiz')">Uji Pemahaman di Arena Kuis ➔</button>
+            `;
+        } else if (lv === 2) {
+            box.innerHTML = `
+                <h3>Level 2: Ungkapan Sapaan Santun (Ada' Pangadereng)</h3>
+                <p style="font-size:0.9rem; color:var(--muted); margin-bottom:12px;">
+                    Dalam budaya Bugis Bone, kesantunan berbahasa mencerminkan martabat (<em>siri'</em>) dan rasa saling menghargai.
+                </p>
+                <table>
+                    <tr><th>Aksara Lontara</th><th>Bahasa Bugis</th><th>Arti & Konteks Penggunaan</th><th>Audio</th></tr>
+                    <tr>
+                        <td><span class="lontara">ᨈᨅᨙ</span></td>
+                        <td><strong>Tabek</strong></td>
+                        <td>Permisi / Mohon maaf (diucapkan sambil sedikit membungkuk saat melewati orang tua/tamu).</td>
+                        <td><button class="btn btn-outline btn-sm" onclick="speakText('Tabek')">🔊 Putar</button></td>
+                    </tr>
+                    <tr>
+                        <td><span class="lontara">ᨕᨁ ᨀᨑᨙᨅ</span></td>
+                        <td><strong>Aga kareba?</strong></td>
+                        <td>Apa kabar? (Sapaan hangat saat bertemu rekan sebaya atau kerabat).</td>
+                        <td><button class="btn btn-outline btn-sm" onclick="speakText('Aga kareba')">🔊 Putar</button></td>
+                    </tr>
+                    <tr>
+                        <td><span class="lontara">ᨆᨑᨙᨍ ᨆᨑᨙᨍ</span></td>
+                        <td><strong>Mareja-reja</strong></td>
+                        <td>Alhamdulillah baik / sehat walafiat (jawaban santun atas kabar).</td>
+                        <td><button class="btn btn-outline btn-sm" onclick="speakText('Mareja reja')">🔊 Putar</button></td>
+                    </tr>
+                </table>
+                <div style="margin-top:14px;">
+                    <button class="btn btn-primary" ${state.mod2Read ? 'disabled' : ''} onclick="completeModule(2)">
+                        ${state.mod2Read ? '✅ Materi Level 2 Selesai' : 'Selesai Membaca (+50 XP)'}
+                    </button>
+                    <button class="btn btn-gold" onclick="navTo('quiz')">Lanjut Tantangan Kuis ➔</button>
+                </div>
+            `;
+        } else {
+            box.innerHTML = `
+                <h3>Level 3: Pappaseng (Pesan Luhur Leluhur Bugis)</h3>
+                <div class="alert alert-success">Selamat! Anda telah membuka Level Mahir karena meraih skor kuis ≥ 80.</div>
+                <p style="margin-bottom:10px;"><strong>Pappaseng To Riolo:</strong></p>
+                <div class="lontara" style="margin-bottom:8px;">ᨑᨛᨅ ᨔᨗᨄᨈᨚᨀᨚᨂᨛ ᨆᨒᨗ ᨔᨗᨄᨑᨄᨛ</div>
+                <p><em>"Rebba sipatokkong, mali siparappe, sirui menre tessirui no."</em></p>
+                <p style="font-size:0.9rem; color:var(--muted); margin-top:4px;">
+                    Artinya: Rebah saling menegakkan, hanyut saling mendamparkan, saling menarik ke atas dan tidak saling menjatuhkan.
+                </p>
+                <button class="btn btn-primary" style="margin-top:14px;" onclick="navTo('tasks')">Kerjakan Proyek Menulis Lontara ➔</button>
+            `;
+        }
+    }
+
+    function completeModule(lv) {
+        if (lv === 1 && !state.mod1Read) { state.mod1Read = true; addXP(50, "Menuntaskan Modul Level 1"); selectModule(1); }
+        if (lv === 2 && !state.mod2Read) { state.mod2Read = true; addXP(50, "Menuntaskan Modul Level 2"); selectModule(2); }
+    }
+
+    function speakText(txt) {
+        if ('speechSynthesis' in window) {
+            const u = new SpeechSynthesisUtterance(txt);
+            u.lang = 'id-ID';
+            u.rate = 0.85;
+            speechSynthesis.speak(u);
+        }
+    }
+
+    // Quiz Engine
+    let userAnswers = {};
+    function renderQuiz() {
+        const container = document.getElementById('quizContainer');
+        container.innerHTML = quizQuestions.map((item, qIdx) => `
+            <div style="margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid var(--border);">
+                <p style="font-weight:700; margin-bottom:8px;">${qIdx + 1}. ${item.q}</p>
+                ${item.options.map((opt, oIdx) => `
+                    <button class="quiz-option" id="q${qIdx}_o${oIdx}" onclick="chooseOption(${qIdx}, ${oIdx})">${String.fromCharCode(65+oIdx)}. ${opt}</button>
+                `).join('')}
+                <div id="exp_${qIdx}" style="display:none; font-size:0.85rem; margin-top:6px;"></div>
+            </div>
+        `).join('') + `<button class="btn btn-primary" onclick="submitQuiz()">Kirim Jawaban & Cek Skor</button>`;
+    }
+
+    function chooseOption(qIdx, oIdx) {
+        userAnswers[qIdx] = oIdx;
+        document.querySelectorAll(`[id^="q${qIdx}_o"]`).forEach(btn => btn.classList.remove('selected'));
+        document.getElementById(`q${qIdx}_o${oIdx}`).classList.add('selected');
+    }
+
+    function submitQuiz() {
+        if (Object.keys(userAnswers).length < quizQuestions.length) {
+            return alert("Silakan jawab seluruh pertanyaan terlebih dahulu.");
+        }
+        let correct = 0;
+        quizQuestions.forEach((item, idx) => {
+            const expBox = document.getElementById(`exp_${idx}`);
+            expBox.style.display = 'block';
+            if (userAnswers[idx] === item.ans) {
+                correct++;
+                expBox.innerHTML = `<span style="color:var(--success); font-weight:700;">✔ Benar!</span> ${item.exp}`;
+            } else {
+                expBox.innerHTML = `<span style="color:var(--maroon); font-weight:700;">✘ Kurang tepat.</span> ${item.exp}`;
+            }
+        });
+        const score = Math.round((correct / quizQuestions.length) * 100);
+        state.quizScore = Math.max(state.quizScore, score);
+        const earnedXP = score >= 80 ? 100 : 40;
+        addXP(earnedXP, `Skor Kuis ${score}/100`);
+    }
+
+    function submitTask() {
+        const note = document.getElementById('taskNote').value.trim();
+        if (!state.taskSubmitted) {
+            state.taskSubmitted = true;
+            addXP(150, "Mengunggah Proyek Budaya Lontara");
+        }
+        document.getElementById('taskStatus').innerHTML = `
+            <div class="alert alert-success">
+                <strong>✅ Tugas Terkirim!</strong><br>
+                Status: <em>Menunggu Penilaian Guru (Titi Rahmayanti, S.Pd., Gr.)</em><br>
+                Lencana <strong>Macca Mabbicara</strong> telah terbuka di profil Anda!
+            </div>
+        `;
+    }
+
+    function renderGradebook() {
+        const rows = [
+            ...studentsData,
+            {
+                name: state.name,
+                kelas: state.kelas,
+                xp: state.xp,
+                quiz: state.quizScore,
+                task: state.taskSubmitted ? "Terkirim (Menunggu Nilai)" : "Belum Dikumpul"
+            }
+        ];
+        document.getElementById('gradebookBody').innerHTML = rows.map((r, i) => `
+            <tr>
+                <td>${i + 1}</td>
+                <td><strong>${r.name}</strong></td>
+                <td>${r.kelas}</td>
+                <td>${r.xp} XP</td>
+                <td>${r.quiz}</td>
+                <td>${r.task}</td>
+                <td>${r.quiz >= 80 ? '<span style="color:var(--success);font-weight:700;">Tuntas (KKTP)</span>' : '<span style="color:var(--muted);">Proses Belajar</span>'}</td>
+            </tr>
+        `).join('');
+    }
+
+    function exportCSV() {
+        let csv = "No,Nama Murid,Kelas,Total XP,Nilai Kuis,Status Proyek Budaya\n";
+        const rows = [
+            ...studentsData,
+            { name: state.name, kelas: state.kelas, xp: state.xp, quiz: state.quizScore, task: state.taskSubmitted ? "Terkirim" : "Belum" }
+        ];
+        rows.forEach((r, i) => {
+            csv += `${i+1},"${r.name}","${r.kelas}",${r.xp},${r.quiz},"${r.task}"\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "Rekap_Nilai_LMS_Bahasa_Bugis_SMAN27Bone.csv";
+        link.click();
+    }
+</script>
+</body>
+</html>
